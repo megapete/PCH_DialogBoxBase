@@ -10,6 +10,8 @@
 		D3614276235F4CC80060B31B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3614275235F4CC80060B31B /* AppDelegate.swift */; };
 		D3614278235F4CCA0060B31B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D3614277235F4CCA0060B31B /* Assets.xcassets */; };
 		D361427B235F4CCA0060B31B /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = D3614279235F4CCA0060B31B /* MainMenu.xib */; };
+		D3614288235F4DA60060B31B /* PCH_DialogBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3614287235F4DA60060B31B /* PCH_DialogBox.swift */; };
+		D361428A235F82540060B31B /* PCH_DialogBoxView.xib in Resources */ = {isa = PBXBuildFile; fileRef = D3614289235F82540060B31B /* PCH_DialogBoxView.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -19,6 +21,8 @@
 		D361427A235F4CCA0060B31B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		D361427C235F4CCA0060B31B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D361427D235F4CCA0060B31B /* PCH_DialogBoxBase.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PCH_DialogBoxBase.entitlements; sourceTree = "<group>"; };
+		D3614287235F4DA60060B31B /* PCH_DialogBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PCH_DialogBox.swift; sourceTree = "<group>"; };
+		D3614289235F82540060B31B /* PCH_DialogBoxView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PCH_DialogBoxView.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,6 +56,8 @@
 			isa = PBXGroup;
 			children = (
 				D3614275235F4CC80060B31B /* AppDelegate.swift */,
+				D3614287235F4DA60060B31B /* PCH_DialogBox.swift */,
+				D3614289235F82540060B31B /* PCH_DialogBoxView.xib */,
 				D3614277235F4CCA0060B31B /* Assets.xcassets */,
 				D3614279235F4CCA0060B31B /* MainMenu.xib */,
 				D361427C235F4CCA0060B31B /* Info.plist */,
@@ -120,6 +126,7 @@
 			files = (
 				D3614278235F4CCA0060B31B /* Assets.xcassets in Resources */,
 				D361427B235F4CCA0060B31B /* MainMenu.xib in Resources */,
+				D361428A235F82540060B31B /* PCH_DialogBoxView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -130,6 +137,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D3614288235F4DA60060B31B /* PCH_DialogBox.swift in Sources */,
 				D3614276235F4CC80060B31B /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -273,6 +281,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.huberis-tech.PCH-DialogBoxBase";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -291,6 +300,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.huberis-tech.PCH-DialogBoxBase";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
