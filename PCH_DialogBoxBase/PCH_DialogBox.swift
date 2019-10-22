@@ -9,7 +9,7 @@
 import Foundation
 import Cocoa
 
-class PCH_DialogBox
+class PCH_DialogBox:NSObject, NSWindowDelegate
 {
     var window:NSWindow? = nil
     var view:NSView? = nil
@@ -18,6 +18,7 @@ class PCH_DialogBox
     
     var setupIsDone = false
     
+    // My new favorite thing, throwing exceptions with custom-built errors
     struct DialogBoxError:Error
     {
         enum errorType
@@ -52,7 +53,7 @@ class PCH_DialogBox
                     return "Topmost-level object is not an NSView"
                 }
                 
-                return "An unknown erro occurred."
+                return "An unknown error occurred."
             }
         }
     }
@@ -66,16 +67,13 @@ class PCH_DialogBox
     // This function is meant to be called internally by this class (ie: it should probably be declared as private)
     func SetupDialogBox() throws
     {
-        if self.setupIsDone
-        {
-            return
-        }
-        
-        guard let viewNib = NSNib(nibNamed: self.nibName, bundle: nil) else
+        // Load the nib file that holds our view
+        guard let viewNib = NSNib(nibNamed: self.nibName, bundle: Bundle.main) else
         {
             throw DialogBoxError(info: self.nibName, type: .InvalidViewNibName)
         }
         
+        // Instantiation of the view will put the nib's top level objects in an NSArray?
         var topLevelObs:NSArray?
         
         if !viewNib.instantiate(withOwner: self, topLevelObjects: &topLevelObs)
@@ -83,22 +81,53 @@ class PCH_DialogBox
             throw DialogBoxError(info: self.nibName, type: .InvalidView)
         }
         
-        guard topLevelObs != nil else
+        guard let nibObjects = topLevelObs else
         {
             throw DialogBoxError(info: self.nibName, type: .InvalidView)
         }
         
-        self.view = topLevelObs![0] as? NSView
-        if self.view == nil
+        // find our view in the array of objects and set the class' property to it
+        for nextObject in nibObjects
+        {
+            if let view = nextObject as? NSView
+            {
+                self.view = view
+                break
+            }
+        }
+        
+        // make sure we found a view
+        guard let theView = self.view else
         {
             throw DialogBoxError(info: self.nibName, type: .InvalidTopLevelObject)
         }
         
+        // create the window
+        let theWindow = NSWindow(contentRect: theView.frame, styleMask: [.titled, .closable], backing: .buffered, defer: false)
+        
+        theWindow.contentView = theView
+        theWindow.delegate = self
+        
+        self.window = theWindow
         self.setupIsDone = true
     }
     
-    func runModal() -> NSApplication.ModalResponse
+    func runModal() throws -> NSApplication.ModalResponse
     {
+        if !self.setupIsDone
+        {
+            do
+            {
+                try self.SetupDialogBox()
+            }
+            catch
+            {
+                throw error
+            }
+        }
         
+        let result = NSApp.runModal(for: self.window!)
+        
+        return result
     }
 }

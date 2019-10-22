@@ -16,6 +16,17 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         // Insert code here to initialize your application
+        
+        let test = PCH_DialogBox(viewNibFileName: "PCH_DialogBoxView")
+        
+        do
+        {
+            let test2 = try test.runModal()
+        }
+        catch
+        {
+            print("ERROR: \(error)")
+        }
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {
