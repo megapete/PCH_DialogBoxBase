@@ -19,14 +19,17 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         let test = PCH_DialogBox(viewNibFileName: "PCH_DialogBoxView")
         
-        do
+        let result =  test.runModal()
+            
+        if result == .OK
         {
-            let test2 = try test.runModal()
+            DLog("User chose OK")
         }
-        catch
+        else
         {
-            print("ERROR: \(error)")
+            DLog("User chose Cancel")
         }
+       
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {

@@ -6,8 +6,17 @@
 //  Copyright © 2019 Peter Huber. All rights reserved.
 //
 
+// Class to simplify the creation of old-style "Dialog Boxes". The calling project should have a PCH_DialogBox-derived class to which the interface elements of a dialog box are hardwired. The parent class will take care of adding Cancel and Ok buttons (and handling their actions), so enough room should be left at the bottom-right for these items.
+
 import Foundation
 import Cocoa
+
+// File-private Extension of Selector for button-action stuff. This is a cool idea from "https://medium.com/@abhimuralidharan/selectors-in-swift-a-better-approach-using-extensions-aa6b0416e850"
+fileprivate extension Selector
+{
+    static let okButtonTapped = #selector(PCH_DialogBox.handleOk)
+    static let cancelButtonTapped = #selector(PCH_DialogBox.handleCancel)
+}
 
 class PCH_DialogBox:NSObject, NSWindowDelegate
 {
@@ -58,7 +67,7 @@ class PCH_DialogBox:NSObject, NSWindowDelegate
         }
     }
     
-    // The viewNibFileName must point at a XIB file that should be derived from PCH_DialogBoxView so that the Cancel & Ok buttons appear and they track the bottom-right corner of the view. Any NSView can actually be used, provided 
+    /// The viewNibFileName must point at a XIB file that has room at the bottom-right to add Cancel and Ok buttons (do not actually add these buttons to the view). All other interface elements' handlers should be wired (in IB) to a PCH_DialogBox-derived class.
     init(viewNibFileName:String)
     {
         self.nibName = viewNibFileName
@@ -102,9 +111,33 @@ class PCH_DialogBox:NSObject, NSWindowDelegate
             throw DialogBoxError(info: self.nibName, type: .InvalidTopLevelObject)
         }
         
+        // constants for the OK and Cancel buttons
+        let edgeDistance:CGFloat = 20.0
+        let buttonHt:CGFloat = 25.0
+        let buttonW:CGFloat = 80.0
+        let betweenButtons:CGFloat = 10.0
+        
+        // NSRects for the buttons
+        let okRect = NSRect(x: theView.frame.origin.x + theView.frame.size.width - edgeDistance - buttonW, y: edgeDistance, width: buttonW, height: buttonHt)
+        let cancelRect = NSRect(x: okRect.origin.x - betweenButtons - buttonW, y: edgeDistance, width: buttonW, height: buttonHt)
+        
+        // Create the OK button
+        let okButton = NSButton(title: "Ok", target: self, action: .okButtonTapped)
+        okButton.setButtonType(.momentaryPushIn)
+        okButton.isHidden = false
+        okButton.frame = okRect
+        theView.addSubview(okButton)
+        
+        // Create the Cancel button
+        let cancelButton = NSButton(title: "Cancel", target: self, action: .cancelButtonTapped)
+        cancelButton.setButtonType(.momentaryPushIn)
+        cancelButton.frame = cancelRect
+        theView.addSubview(cancelButton)
+        
         // create the window
         let theWindow = NSWindow(contentRect: theView.frame, styleMask: [.titled, .closable], backing: .buffered, defer: false)
         
+        // Set the view and the window delegate (this is for future expansion)
         theWindow.contentView = theView
         theWindow.delegate = self
         
@@ -112,7 +145,7 @@ class PCH_DialogBox:NSObject, NSWindowDelegate
         self.setupIsDone = true
     }
     
-    func runModal() throws -> NSApplication.ModalResponse
+    func runModal() -> NSApplication.ModalResponse
     {
         if !self.setupIsDone
         {
@@ -122,12 +155,28 @@ class PCH_DialogBox:NSObject, NSWindowDelegate
             }
             catch
             {
-                throw error
+                let alert = NSAlert(error: error)
+                let _ = alert.runModal()
+                return .cancel
             }
         }
         
         let result = NSApp.runModal(for: self.window!)
         
         return result
+    }
+    
+    @objc func handleOk()
+    {
+        // DLog("Ok was pushed")
+        NSApp.stopModal(withCode: .OK)
+        self.window!.orderOut(self)
+    }
+    
+    @objc func handleCancel()
+    {
+        // DLog("Cancel was pushed")
+        NSApp.stopModal(withCode: .cancel)
+        self.window!.orderOut(self)
     }
 }
